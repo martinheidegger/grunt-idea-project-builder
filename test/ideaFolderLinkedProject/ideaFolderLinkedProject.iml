@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="Flex" version="4">
+  <component name="FlexBuildConfigurationManager" active="ideaFolderLinkedProject">
+    <configurations>
+      <configuration name="ideaFolderLinkedProject" pure-as="true" main-class="IdeaFolderLinkedProject" output-file="IdeaFolderLinkedProject.swf" output-folder="$MODULE_DIR$/out/production/ideaFolderLinkedProject">
+        <dependencies target-player="11.4">
+          <entries>
+            <entry library-id="2bc4ce58-bd81-40cd-a578-8e48f21da2cb">
+              <dependency linkage="Merged" />
+            </entry>
+          </entries>
+          <sdk name="flex_sdk_4.6" />
+        </dependencies>
+        <compiler-options />
+        <packaging-air-desktop />
+        <packaging-android />
+        <packaging-ios />
+      </configuration>
+    </configurations>
+    <compiler-options />
+  </component>
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+    </content>
+    <orderEntry type="jdk" jdkName="flex_sdk_4.6" jdkType="Flex SDK Type (new)" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module-library" exported="">
+      <library type="flex">
+        <properties id="2bc4ce58-bd81-40cd-a578-8e48f21da2cb" />
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/as3commons-logging-2.7.swc!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+  </component>
+</module>
+
