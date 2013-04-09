@@ -2,7 +2,7 @@ fs = require 'fs'
 path = require 'path'
 async = require 'async'
 glob = require 'glob'
-{utils: {parseXml}} = require('flash-build-api')
+{utils: {parseXml, resolveSymlink}} = require('flash-build-api')
 
 modules_xml = (data)->
     modules = []
@@ -76,7 +76,12 @@ module_xml = (data)->
                     }
                 else if properties.name == "FlexBuildConfigurationManager"
                     return {
-                        "compiler-options": {}
+                        "compiler-options": {
+                            option: (properties)->
+                                if properties.name == "additionalOptions"
+                                    return data.additionalOptions = properties.value
+                                return null
+                        }
                         configurations: {
                             configuration: (properties) ->
                                 if properties.name?
@@ -193,7 +198,7 @@ iml_file = (data)->
 _replaceModule = (targetPath, dir)->
     if targetPath?
         p = targetPath.replace(/\$MODULE_DIR\$/, dir)
-        return path.relative(dir, p)
+        return (path.relative(dir, resolveSymlink(p)))
     else
         return null
 
@@ -256,6 +261,7 @@ _resolveNamedDependencies = (namedDependencyMap, projectDir)->
         swcs = []
         for libPath in namedDependency.libPaths
             swcs = swcs.concat glob.sync("#{libPath}/*.swc")
+            swcs = swcs.concat glob.sync("#{libPath}/*.ane")
         namedDependency.swcs = swcs
     return namedDependencyMap
 
@@ -317,6 +323,10 @@ _constructData = (result, allModules, moduleDir, flexHome, namedDependencyMap, o
         args["source-path"] = moduleSourcePaths
         args.files = files
         args["static-link-runtime-shared-libraries"] = "true"
+        if result.data.additionalOptions
+            args.additionalOptions ?= ""
+            args.additionalOptions += " "+result.data.additionalOptions
+
         delete args['classes']
         delete args['libraryItems']
         delete args['libraryPaths']
@@ -340,7 +350,6 @@ _constructData = (result, allModules, moduleDir, flexHome, namedDependencyMap, o
             androidModules[name] = _createAirModule(name, args, moduleDir, swfModules[name], flexHome, swfModules)
     catch e
         console.info e.stack
-    
 
     onComplete(null, allModules)
 
@@ -417,6 +426,6 @@ module.exports = (folder, flexHome, onComplete)->
                                 moduleLoaders.push _loadModule(allModules, module, moduleRoot, root, ideaRoot, flexHome)
                             
                             async.parallel moduleLoaders, (error, result)->
-                                onComplete(null, allModules)
+                                onComplete(error, allModules)
                 else
                     onComplete("Folder does not contain an idea project")

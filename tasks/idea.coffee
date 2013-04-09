@@ -29,14 +29,14 @@ _compile = (project, module, target, data)->
                     available = (name for name, data of moduleRoot)
                     onComplete(new Error("Module '#{module}' is not available for target '#{target}', available targets: #{available}"))
                 else
-                    airModule = deepExtend({}, airModule)
+                    airModule = deepExtend({args:{}}, airModule)
 
                     if data.version then airModule.args.version = data.version
 
-                    airModule = deepExtend deepExtend(airModule, {
-                        args:
-                            target: target
-                     }), {
+                    airModule = deepExtend airModule, {
+                        args: {target}
+                    }
+                    airModule = deepExtend airModule, {
                         args: data.air
                     }
 
@@ -99,6 +99,8 @@ grunt.registerMultiTask 'idea', 'Allows compilation of idea projects.', ->
                 compileStatements = (_compile(project, module, compileTarget, compileData) for compileTarget, compileData of compile)
                 async.series compileStatements, finish 
             else
-                grunt.log.warn("No valid Module specified!")
+                modules = (name for name, swf of project.swf)
+
+                grunt.log.warn("No valid Module specified! Available modules:", modules.join(", "))
                 finish()
         
