@@ -1,0 +1,1 @@
+This project offers some wrapper methods for the flex sdk commands. Right now they the wrappers are optimized for AIR deployment (and for the use with the "air" variant of the sdk).
