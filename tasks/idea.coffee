@@ -1,76 +1,111 @@
 grunt = require 'grunt'
 async = require 'async'
-{deepExtend, packageTargets} = require('flash-build-api').utils
+flash = require 'flash-build-api'
 idea = require '../lib'
+{deepExtend, packageTargets} = flash.utils
 
-_compile = (project, module, target, data)->
+_doCompile = (swf, data, onComplete)->
+    extra = {}
+    if data.version then extra["CONFIG::version"] = data.version
+    additional = deepExtend({"define": extra}, data.swf)
+    compileActive = data.compile || !data.compile?
+    swf = deepExtend swf, {
+        args:
+            additionalArguments: additional
+    }
+    if compileActive
+        flash.compileSWF swf.args, swf.path, onComplete
+    else
+        onComplete()
+
+_oneTask = (project, module, target, data)->
     return (onComplete)->
-        extra = {}
-        if data.version then extra["CONFIG::version"] = data.version
-        additional = deepExtend({"define": extra}, data.swf)
-        swf = deepExtend project.swf[module], {
-            args:
-                additionalArguments: additional
-        }
-
-        nextStep = (result)->
-            if target == "swf" then onComplete(null, result)
-            else if packageTargets.all.indexOf(target) != -1
-                if packageTargets.android.indexOf(target) != -1
-                    moduleRoot = project.android
-                else if packageTargets.ios.indexOf(target) != -1
-                    moduleRoot = project.ios
-                else 
-                    onComplete()
-                    return
-
-                airModule = moduleRoot[module]
-                if !airModule
-                    available = (name for name, data of moduleRoot)
-                    onComplete(new Error("Module '#{module}' is not available for target '#{target}', available targets: #{available}"))
-                else
-                    airModule = deepExtend({args:{}}, airModule)
-
-                    if data.version then airModule.args.version = data.version
-
-                    airModule = deepExtend airModule, {
-                        args: {target}
-                    }
-                    airModule = deepExtend airModule, {
-                        args: data.air
-                    }
-
-                    method = (
-                        if data.package || data.package == undefined
-                            if data.install?
-                                if data.launch? then idea.packageReinstallLaunchAir
-                                else                 idea.packageReinstallAir
-                            else
-                                if data.launch? then null #todo: need a packageLaunchAir command
-                                else                 idea.packageAir
-                        else
-                            if data.install?
-                                if data.launch? then idea.reinstallLaunchAir
-                                else                 idea.reinstallAir
-                            else
-                                if data.launch? then idea.launchAir
-                                else                 null
-                    )
-
-                    if method
-                        method.apply idea, [airModule.args, airModule.path, onComplete]
-                    else
-                        onComplete(null, result)
-            else
-                onComplete("Don't know what to do with a '#{target}'-target please use: swf,"+packageTargets.all.join(","))
+        actions = []
+        swf = project.swf[module]
+        testSwf = project.testSwf?[module]
 
         if data.compile || !data.compile?
-            idea.compileSWF swf.args, swf.path, (error, result)->
-                if error then onComplete(error)
+            if data.test
+                if testSwf
+                    actions.push (onComplete) ->
+                        grunt.log.writeln("Compiling #{module} test swf")
+                        _doCompile testSwf, data, onComplete
                 else
-                    nextStep(result)
+                    onComplete("#{module} does not have test code but asks for executing unit tests")
+                    return
+
+            actions.push (onComplete) ->
+                if swf
+                    grunt.log.writeln("Compiling #{module} regular swf")
+                    _doCompile swf, data, onComplete
+                else
+                    onComplete("Woops, trying to compile unexisting project #{module}")
+
+        if target == "swf" then # ignore
+        else if packageTargets.all.indexOf(target) != -1
+            if packageTargets.android.indexOf(target) != -1
+                moduleRoot = project.android
+                testModuleRoot = project.testAndroid
+            else if packageTargets.ios.indexOf(target) != -1
+                moduleRoot = project.ios
+                testModuleRoot = project.testIos
+            else 
+                moduleRoot = project.air
+                testModuleRoot = project.testAir
+
+            airModule = moduleRoot[module]
+            if !airModule
+                available = (name for name, data of moduleRoot)
+                onComplete(new Error("Module '#{module}' is not available for target '#{target}', available targets: #{available}"))
+                return
+            else
+                actions.unshift (onComplete) ->
+                    grunt.log.writeln "Making sure that a required app.xml is available..."
+                    idea.createAppXmlIfNecessary airModule.args, root, data.version, data.air, target, (error, result)->
+                        if error then onComplete(error)
+                        else
+                            onComplete()
+
+                if testSwf
+                    testAirModule = testModuleRoot[module]
+                    if !testAirModule
+                        onComplete(new Error("Module '#{module}' can not be tested for target '#{target}'"))
+                        return
+
+                    actions.splice 2, 0, (onComplete) ->
+                        flash.runAirUnitTest testAirModule.args, testAirModule.path, (error, result)->
+                            if error
+                                for part in result
+                                    for entry in part when entry.error
+                                        grunt.log.error entry.error
+                                onComplete(error)
+                            else
+                                onComplete()
+                    
+                    actions.unshift (onComplete) ->
+                        grunt.log.writeln "Making sure that a required test-app.xml is available..."
+                        idea.createAppXmlIfNecessary testAirModule.args, root, data.version, data.air, target, (error, result)->
+                            if error then onComplete(error)
+                            else 
+                                onComplete()
+
+                if data.package || data.package == undefined
+                    actions.push (onComplete) ->
+                        grunt.log.writeln "Packaging Air..."
+                        flash.packageAir(airModule.args, airModule.path, onComplete)
+                if data.install?
+                    actions.push (onComplete) ->
+                        grunt.log.writeln "Reinstalling Air..."
+                        flash.reinstallAir(airModule.args, airModule.path, onComplete)
+                if data.launch?
+                    actions.push (onComplete) -> 
+                        grunt.log.writeln "Launching Air..."
+                        flash.launchAir(airModule.args, airModule.path, onComplete)
         else
-            nextStep(null)
+            onComplete("Don't know what to do with a '#{target}'-target please use: swf,"+packageTargets.all.join(","))
+            return
+
+        async.series actions, onComplete
 
 validateModule = (module, project)->
     if !module
@@ -91,16 +126,15 @@ grunt.registerMultiTask 'idea', 'Allows compilation of idea projects.', ->
     onComplete = @async()
     module = @data.module
     compile = @data.compile
+
     idea.parseProject @data.path, options.flexHome, (error, project)->
         if error then finish(error)
         else
             module = validateModule(module, project)
             if module
-                compileStatements = (_compile(project, module, compileTarget, compileData) for compileTarget, compileData of compile)
+                compileStatements = []
+                for compileTarget, compileData of compile
+                     compileStatements.push _oneTask(project, module, compileTarget, compileData)
                 async.series compileStatements, finish 
             else
-                modules = (name for name, swf of project.swf)
-
-                grunt.log.warn("No valid Module specified! Available modules:", modules.join(", "))
-                finish()
-        
+                finish "No valid Module specified! Available modules: " + (name for name, swf of project.swf).join(", ")
