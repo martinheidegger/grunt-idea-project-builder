@@ -21,7 +21,7 @@
     "compile"
   ],
   "dependencies": {
-    "flash-build-api": "0.0.5",
+    "flash-build-api": "0.0.6",
     "xtend": "~2.0.3",
     "glob": "~3.1.21",
     "async": "~0.2.6"
