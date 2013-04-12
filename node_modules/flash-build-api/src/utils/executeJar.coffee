@@ -1,17 +1,17 @@
 {exec} = require 'child_process'
 
-module.exports = (jar, args, root, onComplete) ->
+module.exports = (jar, args, cwd, onComplete) ->
     start = Date.now()
     cmd = "java -Xmx384m -Djava.awt.headless=true -Dsun.io.useCanonCaches=false -jar \"#{jar}\" #{args}"
     console.info cmd
-    exec cmd, {cwd: root}, (error, stdout, stderr) ->
+    return exec cmd, {cwd: cwd}, (error, stdout, stderr) ->
         if onComplete
             result = {
                 cmd
                 error
                 stderr
                 stdout
-                path: root
+                path: cwd
                 duration: Date.now()-start
             }
             if error

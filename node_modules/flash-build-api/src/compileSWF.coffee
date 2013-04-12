@@ -95,15 +95,15 @@ prepareFlashArgs = (args, root, flexHome) ->
 module.exports = (args, root, onComplete) ->
     try
         flexHome = getFlexHome(args)
+        args = prepareFlashArgs(deepExtend(args, args.additionalArguments), root, flexHome)
+        argList = ["+flexlib=\"#{flexHome}/frameworks\""]
+        argList = addDefinesSpecially(args, argList)
+        argList = addRegularArguments(args, argList, "=", "additionalArguments", "additionalOptions", "flexHome", "define")
+        argList.push args.additionalOptions
+        if args.additionalArguments
+            argList = addDefinesSpecially(args.additionalArguments, argList)
+            
+        executeJar "#{flexHome}/lib/mxmlc.jar", argList.join(" "), root, onComplete
     catch e
         onComplete e
         return
-    args = prepareFlashArgs(deepExtend(args, args.additionalArguments), root, flexHome)
-    argList = ["+flexlib=\"#{flexHome}/frameworks\""]
-    argList = addDefinesSpecially(args, argList)
-    argList = addRegularArguments(args, argList, "=", "additionalArguments", "additionalOptions", "flexHome", "define")
-    argList.push args.additionalOptions
-    if args.additionalArguments
-        argList = addDefinesSpecially(args.additionalArguments, argList)
-        
-    executeJar "#{flexHome}/lib/mxmlc.jar", argList.join(" "), root, onComplete

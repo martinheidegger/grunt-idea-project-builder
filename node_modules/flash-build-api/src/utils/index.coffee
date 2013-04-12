@@ -14,4 +14,6 @@ module.exports = {
     genericAdt          : require './genericAdt'
     parseXml            : require './parseXml'
     resolveSymlink      : require './resolveSymlink'
+    adaptAppXml         : require './adaptAppXml'
+    adaptAppXmlFile     : require './adaptAppXmlFile'
 }

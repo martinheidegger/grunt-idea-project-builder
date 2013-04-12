@@ -9,4 +9,6 @@ module.exports = {
     reinstallLaunchAir:          require './reinstallLaunchAir'
     packageReinstallAir:         require './packageReinstallAir'
     packageReinstallLaunchAir:   require './packageReinstallLaunchAir'
+    runUnitTest:                 require './runUnitTest'
+    runAirUnitTest:              require './runAirUnitTest'
 }
