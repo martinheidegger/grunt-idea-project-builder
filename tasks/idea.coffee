@@ -21,8 +21,8 @@ _doCompile = (swf, data, onComplete)->
 _oneTask = (project, module, target, data)->
     return (onComplete)->
         actions = []
-        swf = project.swf[module]
-        testSwf = project.testSwf?[module]
+        swf = deepExtend {}, project.swf[module]
+        testSwf = deepExtend {}, project.testSwf?[module]
 
         if data.compile || !data.compile?
             if data.test
@@ -53,7 +53,7 @@ _oneTask = (project, module, target, data)->
                 moduleRoot = project.air
                 testModuleRoot = project.testAir
 
-            airModule = moduleRoot[module]
+            airModule = deepExtend {}, moduleRoot[module]
             if !airModule
                 available = (name for name, data of moduleRoot)
                 onComplete(new Error("Module '#{module}' is not available for target '#{target}', available targets: #{available}"))
@@ -65,10 +65,10 @@ _oneTask = (project, module, target, data)->
                         if error then onComplete(error)
                         else
                             airModule.args = result
-                            onComplete()
+                            onComplete(null, "xml created")
 
                 if testSwf && data.test
-                    testAirModule = testModuleRoot[module]
+                    testAirModule = deepExtend {}, testModuleRoot[module]
                     if !testAirModule
                         onComplete(new Error("Module '#{module}' can not be tested for target '#{target}'"))
                         return
