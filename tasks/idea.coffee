@@ -64,9 +64,10 @@ _oneTask = (project, module, target, data)->
                     idea.createAppXmlIfNecessary airModule.args, root, data.version, data.air, target, (error, result)->
                         if error then onComplete(error)
                         else
+                            airModule.args = result
                             onComplete()
 
-                if testSwf
+                if testSwf && data.test
                     testAirModule = testModuleRoot[module]
                     if !testAirModule
                         onComplete(new Error("Module '#{module}' can not be tested for target '#{target}'"))
@@ -87,17 +88,18 @@ _oneTask = (project, module, target, data)->
                         idea.createAppXmlIfNecessary testAirModule.args, root, data.version, data.air, target, (error, result)->
                             if error then onComplete(error)
                             else 
+                                testAirModule.args = result
                                 onComplete()
 
                 if data.package || data.package == undefined
                     actions.push (onComplete) ->
                         grunt.log.writeln "Packaging Air..."
                         flash.packageAir(airModule.args, airModule.path, onComplete)
-                if data.install?
+                if data.install
                     actions.push (onComplete) ->
                         grunt.log.writeln "Reinstalling Air..."
                         flash.reinstallAir(airModule.args, airModule.path, onComplete)
-                if data.launch?
+                if data.launch
                     actions.push (onComplete) -> 
                         grunt.log.writeln "Launching Air..."
                         flash.launchAir(airModule.args, airModule.path, onComplete)

@@ -10,6 +10,7 @@ module.exports = (data, root, version, air, target, onComplete)->
                 if version then data.version = version
 
                 data = deepExtend data, air
+                data.target = target
                 onComplete(null, data)
     else
         onComplete(null, data)
