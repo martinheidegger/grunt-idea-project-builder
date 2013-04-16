@@ -324,6 +324,7 @@ _constructData = (result, allModules, moduleDir, flexHome, namedDependencyMap, o
 
         for name, args of result.data.swf.modules
             libraryPaths = []
+            externalLibraryPaths = []
             moduleSourcePaths = sourcePaths.concat()
 
             args.output = _replaceModule(args.output, moduleDir)
@@ -342,6 +343,12 @@ _constructData = (result, allModules, moduleDir, flexHome, namedDependencyMap, o
                 moduleSourcePaths = moduleSourcePaths.concat(library.sourcePaths)
                 libraryPaths = libraryPaths.concat(library.swcs)
 
+            for i in [libraryPaths.length-1..0]
+                item = libraryPaths[i]
+                if /\.ane$/.test(item)
+                    libraryPaths.splice(i, 1)
+                    externalLibraryPaths.push(item)
+
             args["source-path"] = moduleSourcePaths
             args.files = files
             args["static-link-runtime-shared-libraries"] = "true"
@@ -358,6 +365,9 @@ _constructData = (result, allModules, moduleDir, flexHome, namedDependencyMap, o
 
             if libraryPaths.length > 0
                 args["compiler.library-path"] = libraryPaths
+
+            if externalLibraryPaths.length > 0
+                args["compiler.external-library-path"] = externalLibraryPaths
 
             swfModules[name] = {
                 path: moduleDir
