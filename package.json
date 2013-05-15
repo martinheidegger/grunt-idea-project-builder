@@ -1,6 +1,6 @@
 {
   "name": "grunt-idea-project-builder",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "author": "Martin Heidegger <mh@leichtgewicht.at>",
   "description": "Grunt tasks to build idea projects (oppinionated flash implementation available only).",
   "contributors": [
@@ -21,7 +21,7 @@
     "compile"
   ],
   "dependencies": {
-    "flash-build-api": "0.0.9",
+    "flash-build-api": "0.0.10",
     "xtend": "~2.0.3",
     "glob": "~3.1.21",
     "async": "~0.2.6"
