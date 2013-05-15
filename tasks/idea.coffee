@@ -15,6 +15,7 @@ _doCompile = (swf, data, onComplete)->
     }
     if compileActive
         flash.compileSWF swf.args, swf.path, onComplete
+
     else
         onComplete()
 

@@ -313,12 +313,12 @@ _constructData = (result, allModules, moduleDir, flexHome, namedDependencyMap, o
 
         swfModules         = allModules.swf         ?= {}
         testSwfModules     = allModules.testSwf     ?= {}
-        iosModules         = allModules.ios         ?= {}
-        testIosModules     = allModules.testIos     ?= {}
-        androidModules     = allModules.android     ?= {}
-        testAndroidModules = allModules.testAndroid ?= {}
-        airModules         = allModules.air         ?= {}
-        testAirModules     = allModules.testAir     ?= {}
+        allModules.ios         ?= {}
+        allModules.testIos     ?= {}
+        allModules.android     ?= {}
+        allModules.testAndroid ?= {}
+        allModules.air         ?= {}
+        allModules.testAir     ?= {}
 
         hasTests = result.data["test-path"].length > 0
 
@@ -389,24 +389,9 @@ _constructData = (result, allModules, moduleDir, flexHome, namedDependencyMap, o
                         args: args
                     }
         try
-            for name, args of result.data.ios
-                iosModules[name]     = _createAirModule(args, moduleDir, swfModules[name], flexHome)
-
-            for name, args of result.data.android
-                androidModules[name] = _createAirModule(args, moduleDir, swfModules[name], flexHome)
-
-            for name, args of result.data.air
-                airModules[name]     = _createAirModule(args, moduleDir, swfModules[name], flexHome)
-
+            _createAllAirModules allModules, result.data, args, moduleDir, flexHome, false
             if hasTests
-                for name, args of result.data.ios
-                    testIosModules[name]     = _createAirModule(args, moduleDir, testSwfModules[name], flexHome)
-
-                for name, args of result.data.android
-                    testAndroidModules[name] = _createAirModule(args, moduleDir, testSwfModules[name], flexHome)
-
-                for name, args of result.data.air
-                    testAirModules[name]     = _createAirModule(args, moduleDir, testSwfModules[name], flexHome)
+                _createAllAirModules allModules, result.data, args, moduleDir, flexHome, true
         catch e
             onComplete(e.stack)
             return
@@ -415,6 +400,27 @@ _constructData = (result, allModules, moduleDir, flexHome, namedDependencyMap, o
     catch e
         console.error e.stack
         throw e
+
+
+_createAllAirModules = (allModules, allModuleArgs, args, moduleDir, flexHome, tests)->
+    if tests 
+        swfModules     = allModules.testSwf
+        iosModules     = allModules.testIos
+        androidModules = allModules.testAndroid
+        airModules     = allModules.testAir
+    else
+        swfModules     = allModules.swf
+        iosModules     = allModules.ios
+        androidModules = allModules.android
+        airModules     = allModules.air
+
+    _createAirModules iosModules,     allModuleArgs.ios,     args, moduleDir, swfModules, flexHome
+    _createAirModules androidModules, allModuleArgs.android, args, moduleDir, swfModules, flexHome
+    _createAirModules airModules,     allModuleArgs.air,     args, moduleDir, swfModules, flexHome
+
+_createAirModules = (modules, moduleArgs, args, moduleDir, swfModules, flexHome) ->
+    for name, args of moduleArgs
+        modules[name] = _createAirModule(args, moduleDir, swfModules[name], flexHome)
 
 removeUndefined = (obj)->
     for name, val of obj
@@ -425,12 +431,7 @@ removeUndefined = (obj)->
 _createAirModule = (args, moduleDir, swfModule, flexHome)->
     outputFile = swfModule.args.output
     outDir = path.dirname(outputFile)
-    extDirs = []
-    if swfModule.args['compiler.library-path'] 
-        for libPath in swfModule.args['compiler.library-path']
-            libDir = path.dirname(libPath)
-            if /\.ane/.test(libPath) and extDirs.indexOf(libDir) == -1 then extDirs.push(libDir)
-
+    paths = _createAirPackagePaths(args, moduleDir, outputFile)
     return {
         path: moduleDir
         args: removeUndefined 
@@ -442,10 +443,23 @@ _createAirModule = (args, moduleDir, swfModule, flexHome)->
             keystore:               _replaceModule(args.key, moduleDir)
             "provisioning-profile": _replaceModule(args["provisioning-profile"], moduleDir)
             inputDescriptor:        _replaceModule(args.descriptor, moduleDir)
-            paths:                  _createAirPackagePaths(args, moduleDir, outputFile)
-            extDirs:                extDirs
-        
+            paths:                  paths
+            extDirs:                _getExtDirs(swfModule.args['compiler.library-path'], paths)
     }
+
+_getExtDirs = (libraryPaths, paths)->
+    aneFolders = _getAneContainingFolders(libraryPaths)
+    aneFolders = _getAneContainingFolders(pkgPath['file-path'] for pkgPath in paths, aneFolders)
+    return aneFolders
+
+_getAneContainingFolders = (paths, aneFolders=[]) ->
+    if paths
+        for subPath in paths 
+            dir = path.dirname(subPath)
+            if /\.ane$/.test(subPath) and aneFolders.indexOf(dir) == -1
+                aneFolders.push(dir)
+    return aneFolders
+
 
 _createAirPackagePaths = (args, moduleDir, outputFile)->
     paths = []

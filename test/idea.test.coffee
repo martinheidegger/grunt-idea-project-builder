@@ -2,6 +2,7 @@ path = require 'path'
 fs = require 'fs'
 assert = require 'assert'
 tasks = require '../lib'
+flash = require 'flash-build-api'
 
 wrap = (next, handler) ->
     return ->
@@ -127,10 +128,10 @@ describe "reading a project", ->
                 }, android.args)
             
             return (next)->
-                tasks.compileSWF swf.args, swf.path, wrap next, (error, result)->
+                flash.compileSWF swf.args, swf.path, wrap next, (error, result)->
                     if error then throw error
                     return (next)->
                         android.args.storepass = "test"
                         android.args.target = "apk"
-                        tasks.packageReinstallLaunchAir android.args, android.path, wrap next, (error, result)->
+                        flash.packageReinstallLaunchAir android.args, android.path, wrap next, (error, result)->
                             if error then throw error

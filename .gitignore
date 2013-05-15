@@ -5,3 +5,4 @@ test/ideaAirAndroidProject/out
 test/ideaFolderProject/out
 test/ideaFolderLinkedProject/out
 test/ideaFolderCOProject/out
+node_modules

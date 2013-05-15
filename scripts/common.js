@@ -10,6 +10,7 @@ module.exports = function(onComplete) {
             console.info(stdout)
             console.info(stderr)
             onComplete && onComplete()
+            console.info("Compile coffee done")
         }
     });
 }
