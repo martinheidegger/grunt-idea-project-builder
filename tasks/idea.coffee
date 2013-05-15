@@ -62,7 +62,7 @@ _oneTask = (project, module, target, data)->
             else
                 actions.unshift (onComplete) ->
                     grunt.log.writeln "Making sure that a required app.xml is available..."
-                    idea.createAppXmlIfNecessary airModule.args, root, data.version, data.air, target, (error, result)->
+                    idea.createAppXmlIfNecessary airModule.args, airModule.root, data.version, data.air, target, (error, result)->
                         if error then onComplete(error)
                         else
                             airModule.args = result
@@ -86,7 +86,7 @@ _oneTask = (project, module, target, data)->
                     
                     actions.unshift (onComplete) ->
                         grunt.log.writeln "Making sure that a required test-app.xml is available..."
-                        idea.createAppXmlIfNecessary testAirModule.args, root, data.version, data.air, target, (error, result)->
+                        idea.createAppXmlIfNecessary testAirModule.args, testAirModule.root, data.version, data.air, target, (error, result)->
                             if error then onComplete(error)
                             else 
                                 testAirModule.args = result
