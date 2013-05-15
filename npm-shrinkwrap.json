@@ -1,80 +1,103 @@
 {
   "name": "grunt-idea-project-builder",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "dependencies": {
     "flash-build-api": {
-      "version": "0.0.9",
+      "version": "0.0.10",
+      "from": "flash-build-api@0.0.10",
+      "resolved": "https://registry.npmjs.org/flash-build-api/-/flash-build-api-0.0.10.tgz",
       "dependencies": {
         "node-expat": {
-          "version": "2.0.0"
+          "version": "2.0.0",
+          "from": "node-expat@2.0.0"
         },
         "xmldom": {
-          "version": "0.1.16"
+          "version": "0.1.16",
+          "from": "xmldom@0.1.16"
         }
       }
     },
     "xtend": {
-      "version": "2.0.3"
+      "version": "2.0.3",
+      "from": "xtend@~2.0.3"
     },
     "glob": {
       "version": "3.1.21",
+      "from": "glob@~3.1.21",
       "dependencies": {
         "minimatch": {
           "version": "0.2.12",
+          "from": "minimatch@~0.2.11",
           "dependencies": {
             "lru-cache": {
-              "version": "2.3.0"
+              "version": "2.3.0",
+              "from": "lru-cache@2"
             },
             "sigmund": {
-              "version": "1.0.0"
+              "version": "1.0.0",
+              "from": "sigmund@~1.0.0"
             }
           }
         },
         "graceful-fs": {
-          "version": "1.2.1"
+          "version": "1.2.1",
+          "from": "graceful-fs@~1.2.0"
         },
         "inherits": {
-          "version": "1.0.0"
+          "version": "1.0.0",
+          "from": "inherits@1"
         }
       }
     },
     "async": {
-      "version": "0.2.8"
+      "version": "0.2.8",
+      "from": "async@~0.2.6"
     },
     "coffee-script": {
-      "version": "1.6.2"
+      "version": "1.6.2",
+      "from": "coffee-script@>1.6.1"
     },
     "should": {
-      "version": "1.2.2"
+      "version": "1.2.2",
+      "from": "should@>1.2.1"
     },
     "mocha": {
       "version": "1.9.0",
+      "from": "mocha@>1.8.1",
       "dependencies": {
         "commander": {
-          "version": "0.6.1"
+          "version": "0.6.1",
+          "from": "commander@0.6.1"
         },
         "growl": {
-          "version": "1.7.0"
+          "version": "1.7.0",
+          "from": "growl@1.7.x"
         },
         "jade": {
           "version": "0.26.3",
+          "from": "jade@0.26.3",
           "dependencies": {
             "mkdirp": {
-              "version": "0.3.0"
+              "version": "0.3.0",
+              "from": "mkdirp@0.3.0"
             }
           }
         },
         "diff": {
-          "version": "1.0.2"
+          "version": "1.0.2",
+          "from": "diff@1.0.2"
         },
         "debug": {
-          "version": "0.7.2"
+          "version": "0.7.2",
+          "from": "debug@*"
         },
         "mkdirp": {
-          "version": "0.3.3"
+          "version": "0.3.3",
+          "from": "mkdirp@0.3.3"
         },
         "ms": {
-          "version": "0.3.0"
+          "version": "0.3.0",
+          "from": "ms@0.3.0"
         }
       }
     }
