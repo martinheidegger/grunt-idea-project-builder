@@ -1,4 +1,3 @@
-lib
 test/ideaAirAndroidProject/*.mobileprovision
 test/ideaAirAndroidProject/*.p12
 test/ideaAirAndroidProject/out

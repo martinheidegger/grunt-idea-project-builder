@@ -15,20 +15,31 @@ named_dependency_xml = (data)->
     data.sourcePaths = []
     data.libPaths = []
     return {
-        component: {
-            library: {
-                CLASSES: {
+        component:
+            library:
+                CLASSES:
                     root: {}
-                }
                 JAVADOC: {}
-                SOURCES: {
+                SOURCES:
                     root: (properties)->
                         data.sourcePaths.push(properties.url)
-                }
                 jarDirectory: (properties)->
                     data.libPaths.push(properties.url)
-            }
-        }
+    }
+
+flashCompiler_xml = (data)->
+    return {
+        project:
+            component: (properties)->
+                if properties.name == "FlexIdeProjectLevelCompilerOptionsHolder"
+                    return {
+                        "compiler-options": 
+                            map: null
+                            option: (properties)->
+                                data[properties.name] = properties.value
+                    }
+                else
+                    return null
     }
 
 module_xml = (data)->
@@ -172,34 +183,6 @@ module_xml = (data)->
         }
     }
 
-iml_file = (data)->
-    return {
-        module: (properties)->
-            if properties.type != "Flex"
-                throw "Can not process '#{properties.type}' modules"
-
-            return {
-                component: {
-                    configurations: {
-                        configuration: {
-                            dependencies: (properties)->
-                                return {
-                                    sdk: null
-                                }
-                            "compiler-options": {}
-                            "packaging-air-desktop": {}
-                            "packaging-android": {}
-                            "packaging-ios": {}
-                        }
-                    }
-                    "compiler-options": {
-                    }
-                    "exclude-output": {
-                    }
-                }
-            }
-    }
-
 _replaceModule = (targetPath, dir)->
     if targetPath?
         p = targetPath.replace(/\$MODULE_DIR\$/, dir)
@@ -220,7 +203,7 @@ _loadNamedDependency = (dependency, namedDependencyMap, ideaRoot)->
             namedDependencyMap[dependency] = result.data
             onComplete(error, result)
 
-_loadModule = (allModules, module, moduleDir, projectDir, ideaRoot, flexHome) ->
+_loadModule = (allModules, module, moduleDir, projectDir, ideaRoot, flexHome, globalOptions) ->
     return (onComplete)->
         parseXml module, module_xml, (error, moduleResult)->
             if error then onComplete(error)
@@ -236,7 +219,7 @@ _loadModule = (allModules, module, moduleDir, projectDir, ideaRoot, flexHome) ->
                     else
                         try
                             namedDependencyMap = _resolveNamedDependencies(namedDependencyMap, projectDir)
-                            _constructData(moduleResult, allModules, moduleDir, flexHome, namedDependencyMap, onComplete)
+                            _constructData(moduleResult, allModules, moduleDir, flexHome, namedDependencyMap, globalOptions, onComplete)
                         catch e
                             onComplete(e)
 
@@ -295,7 +278,7 @@ _replaceFiles = (entries, moduleDir) ->
         )
     return result
 
-_constructData = (result, allModules, moduleDir, flexHome, namedDependencyMap, onComplete)->
+_constructData = (result, allModules, moduleDir, flexHome, namedDependencyMap, globalOptions, onComplete)->
 
     try
         libraryItems = {}
@@ -355,6 +338,8 @@ _constructData = (result, allModules, moduleDir, flexHome, namedDependencyMap, o
             if result.data.additionalOptions
                 args.additionalOptions ?= ""
                 args.additionalOptions += " "+result.data.additionalOptions
+            args.inheritedOptions = globalOptions.additionalOptions
+            
 
             delete args['classes']
             delete args['libraryItems']
@@ -494,15 +479,18 @@ module.exports = (folder, flexHome, onComplete)->
                         if error
                             onComplete(error, null)
                         else
-                            allModules = {}
-                            moduleLoaders = []
+                            parseXml path.resolve(ideaRoot, "flexCompiler.xml"), flashCompiler_xml, (error, globalOptions)->
+                                globalOptions ?= {data:{}}
 
-                            for module in result.data.modules
-                                module = _replaceProject(module, root)
-                                moduleRoot = path.resolve(root, path.dirname(module))
-                                moduleLoaders.push _loadModule(allModules, module, moduleRoot, root, ideaRoot, flexHome)
-                            
-                            async.parallel moduleLoaders, (error, result)->
-                                onComplete(error, allModules)
+                                allModules = {}
+                                moduleLoaders = []
+
+                                for module in result.data.modules
+                                    module = _replaceProject(module, root)
+                                    moduleRoot = path.resolve(root, path.dirname(module))
+                                    moduleLoaders.push _loadModule(allModules, module, moduleRoot, root, ideaRoot, flexHome, globalOptions.data)
+                                
+                                async.parallel moduleLoaders, (error, result)->
+                                    onComplete(error, allModules)
                 else
                     onComplete("Folder does not contain an idea project")

@@ -3,9 +3,9 @@
   "version": "0.0.10",
   "dependencies": {
     "flash-build-api": {
-      "version": "0.0.10",
-      "from": "flash-build-api@0.0.10",
-      "resolved": "https://registry.npmjs.org/flash-build-api/-/flash-build-api-0.0.10.tgz",
+      "version": "0.0.11",
+      "from": "flash-build-api@0.0.11",
+      "resolved": "https://registry.npmjs.org/flash-build-api/-/flash-build-api-0.0.11.tgz",
       "dependencies": {
         "node-expat": {
           "version": "2.0.0",
@@ -18,8 +18,38 @@
       }
     },
     "xtend": {
-      "version": "2.0.3",
-      "from": "xtend@~2.0.3"
+      "version": "2.0.4",
+      "from": "xtend@2.0.4",
+      "resolved": "https://registry.npmjs.org/xtend/-/xtend-2.0.4.tgz",
+      "dependencies": {
+        "is-object": {
+          "version": "0.1.2",
+          "from": "is-object@~0.1.2",
+          "resolved": "https://registry.npmjs.org/is-object/-/is-object-0.1.2.tgz"
+        },
+        "object-keys": {
+          "version": "0.2.0",
+          "from": "object-keys@~0.2.0",
+          "resolved": "https://registry.npmjs.org/object-keys/-/object-keys-0.2.0.tgz",
+          "dependencies": {
+            "foreach": {
+              "version": "2.0.3",
+              "from": "foreach@~2.0.1",
+              "resolved": "https://registry.npmjs.org/foreach/-/foreach-2.0.3.tgz"
+            },
+            "indexof": {
+              "version": "0.0.1",
+              "from": "indexof@~0.0.1",
+              "resolved": "https://registry.npmjs.org/indexof/-/indexof-0.0.1.tgz"
+            },
+            "is": {
+              "version": "0.2.6",
+              "from": "is@~0.2.6",
+              "resolved": "https://registry.npmjs.org/is/-/is-0.2.6.tgz"
+            }
+          }
+        }
+      }
     },
     "glob": {
       "version": "3.1.21",
