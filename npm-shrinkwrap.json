@@ -1,10 +1,10 @@
 {
   "name": "grunt-idea-project-builder",
-  "version": "0.0.10",
+  "version": "0.0.12",
   "dependencies": {
     "flash-build-api": {
-      "version": "0.0.11",
-      "from": "flash-build-api@0.0.11",
+      "version": "0.0.13",
+      "from": "flash-build-api@0.0.13",
       "resolved": "https://registry.npmjs.org/flash-build-api/-/flash-build-api-0.0.11.tgz",
       "dependencies": {
         "node-expat": {
@@ -19,32 +19,32 @@
     },
     "xtend": {
       "version": "2.0.4",
-      "from": "xtend@2.0.4",
+      "from": "https://registry.npmjs.org/xtend/-/xtend-2.0.4.tgz",
       "resolved": "https://registry.npmjs.org/xtend/-/xtend-2.0.4.tgz",
       "dependencies": {
         "is-object": {
           "version": "0.1.2",
-          "from": "is-object@~0.1.2",
+          "from": "https://registry.npmjs.org/is-object/-/is-object-0.1.2.tgz",
           "resolved": "https://registry.npmjs.org/is-object/-/is-object-0.1.2.tgz"
         },
         "object-keys": {
           "version": "0.2.0",
-          "from": "object-keys@~0.2.0",
+          "from": "https://registry.npmjs.org/object-keys/-/object-keys-0.2.0.tgz",
           "resolved": "https://registry.npmjs.org/object-keys/-/object-keys-0.2.0.tgz",
           "dependencies": {
             "foreach": {
               "version": "2.0.3",
-              "from": "foreach@~2.0.1",
+              "from": "https://registry.npmjs.org/foreach/-/foreach-2.0.3.tgz",
               "resolved": "https://registry.npmjs.org/foreach/-/foreach-2.0.3.tgz"
             },
             "indexof": {
               "version": "0.0.1",
-              "from": "indexof@~0.0.1",
+              "from": "https://registry.npmjs.org/indexof/-/indexof-0.0.1.tgz",
               "resolved": "https://registry.npmjs.org/indexof/-/indexof-0.0.1.tgz"
             },
             "is": {
               "version": "0.2.6",
-              "from": "is@~0.2.6",
+              "from": "https://registry.npmjs.org/is/-/is-0.2.6.tgz",
               "resolved": "https://registry.npmjs.org/is/-/is-0.2.6.tgz"
             }
           }
@@ -53,47 +53,47 @@
     },
     "glob": {
       "version": "3.1.21",
-      "from": "glob@~3.1.21",
+      "from": "glob@3.1.21",
       "dependencies": {
         "minimatch": {
           "version": "0.2.12",
-          "from": "minimatch@~0.2.11",
+          "from": "minimatch@0.2.12",
           "dependencies": {
             "lru-cache": {
               "version": "2.3.0",
-              "from": "lru-cache@2"
+              "from": "lru-cache@2.3.0"
             },
             "sigmund": {
               "version": "1.0.0",
-              "from": "sigmund@~1.0.0"
+              "from": "sigmund@1.0.0"
             }
           }
         },
         "graceful-fs": {
           "version": "1.2.1",
-          "from": "graceful-fs@~1.2.0"
+          "from": "graceful-fs@1.2.1"
         },
         "inherits": {
           "version": "1.0.0",
-          "from": "inherits@1"
+          "from": "inherits@1.0.0"
         }
       }
     },
     "async": {
       "version": "0.2.8",
-      "from": "async@~0.2.6"
+      "from": "async@0.2.8"
     },
     "coffee-script": {
       "version": "1.6.2",
-      "from": "coffee-script@>1.6.1"
+      "from": "coffee-script@1.6.2"
     },
     "should": {
       "version": "1.2.2",
-      "from": "should@>1.2.1"
+      "from": "should@1.2.2"
     },
     "mocha": {
       "version": "1.9.0",
-      "from": "mocha@>1.8.1",
+      "from": "mocha@1.9.0",
       "dependencies": {
         "commander": {
           "version": "0.6.1",
@@ -101,7 +101,7 @@
         },
         "growl": {
           "version": "1.7.0",
-          "from": "growl@1.7.x"
+          "from": "growl@1.7.0"
         },
         "jade": {
           "version": "0.26.3",
@@ -119,7 +119,7 @@
         },
         "debug": {
           "version": "0.7.2",
-          "from": "debug@*"
+          "from": "debug@0.7.2"
         },
         "mkdirp": {
           "version": "0.3.3",
