@@ -106,6 +106,7 @@ describe "reading a project", ->
                     flexHome: flexHome
                     'output': 'out/production/ideaAirAndroidProject/IdeaAirAndroidProject.swf'
                     'source-path': ['src']
+                    inheritedOptions: undefined
                     additionalOptions: ''
                 }, swf.args)
 
@@ -133,5 +134,6 @@ describe "reading a project", ->
                     return (next)->
                         android.args.storepass = "test"
                         android.args.target = "apk"
+                        android.args["app-id"] = "com.adidas.Stadium"
                         flash.packageReinstallLaunchAir android.args, android.path, wrap next, (error, result)->
                             if error then throw error

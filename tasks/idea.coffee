@@ -6,7 +6,7 @@ idea = require '../lib'
 
 _doCompile = (swf, data, onComplete)->
     extra = {}
-    if data.version then extra["CONFIG::version"] = data.version
+    if swf.version then extra["CONFIG::version"] = swf.version
     additional = deepExtend({"define": extra}, data.swf)
     compileActive = data.compile || !data.compile?
     swf = deepExtend swf, {
